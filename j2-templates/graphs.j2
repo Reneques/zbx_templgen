@@ -1,0 +1,59 @@
+{% for graph in graphs %}
+{% if graph.interfaces %}
+{% for port, p_oid in ports[graph.interfaces].items() %}
+        <graph>
+            <name>[{{ port }}]: {{ graph.name }}</name>
+            {% if graph.ymin %}
+            <yaxismin>{{ graph.ymin }}</yaxismin>
+            <ymin_type_1>FIXED</ymin_type_1>
+            {% endif %}
+            {% if graph.ymax %}
+            <yaxismax>{{ graph.ymax }}</yaxismax>
+            <ymax_type_1>FIXED</ymax_type_1>
+            {% endif %}
+            <graph_items>
+            {% for item in graph.g_items %}
+                <graph_item>
+                    <sortorder>{{ item.sort }}</sortorder>
+                    {% if item.drawtype %}
+                    <drawtype>{{ item.drawtype }}</drawtype>
+                    {% endif %}
+                    <color>{{ item.color }}</color>
+                    <item>
+                        <host>Template Eltex LTP-4X</host>
+                        <key>{{ item.key }}{{ p_oid }}</key>
+                    </item>
+                </graph_item>
+            {% endfor %}
+            </graph_items>
+        </graph>
+{% endfor %}
+{% else %}
+        <graph>
+            <name>{{ graph.name }}</name>
+            {% if graph.ymin %}
+            <yaxismin>{{ graph.ymin }}</yaxismin>
+            <ymin_type_1>FIXED</ymin_type_1>
+            {% endif %}
+            {% if graph.ymax %}
+            <yaxismax>{{ graph.ymax }}</yaxismax>
+            <ymax_type_1>FIXED</ymax_type_1>
+            {% endif %}
+            <graph_items>
+            {% for item in graph.g_items %}
+                <graph_item>
+                    <sortorder>{{ item.sort }}</sortorder>
+                    {% if item.drawtype %}
+                    <drawtype>{{ item.drawtype }}</drawtype>
+                    {% endif %}
+                    <color>{{ item.color }}</color>
+                    <item>
+                        <host>Template Eltex LTP-4X</host>
+                        <key>{{ item.key }}</key>
+                    </item>
+                </graph_item>
+            {% endfor %}
+            </graph_items>
+        </graph>
+{% endif %}
+{% endfor %}

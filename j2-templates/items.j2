@@ -1,0 +1,125 @@
+{% for item in items %}
+{% if item.interfaces %}
+{% for port, p_oid in ports[item.interfaces].items() %}
+                <item>
+                    <name>[{{ port }}]: {{ item.name }}</name>
+                    <type>{{ item.item_type }}</type>
+                    {% if item.oid %}
+                    <snmp_oid>{{ item.oid }}{{ p_oid }}</snmp_oid>
+                    {% endif %}
+                    <key>{{ item.key }}{{ p_oid }}</key>
+                    <delay>{{ item.delay }}</delay>
+                    <history>{{ item.history }}</history>
+                    <trends>{{ item.trends }}</trends>
+                    {% if item.value_type %}
+                    <value_type>{{ item.value_type }}</value_type>
+                    {% endif %}
+                    {% if item.units %}
+                    <units>{{ item.units }}</units>
+                    {% endif %}
+                    {% if item.params %}
+                    <params>{{ item.params[port] }}</params>
+                    {% endif %}
+                    <applications>
+                        <application>
+                            <name>{{ port }}</name>
+                        </application>
+                    </applications>
+                    {% if item.MULTIPLIER or item.CHANGE_PER_SECOND %}
+                    <preprocessing>
+                        {% if item.CHANGE_PER_SECOND %}
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                        {% endif %}
+                        {% if item.MULTIPLIER%}
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>{{ item.MULTIPLIER }}</params>
+                        </step>
+                        {% endif %}
+                    </preprocessing>
+                    {% endif %}
+                    {% if item.triggers %}
+                    <triggers>
+                    {% for trigger in item.triggers %}
+                        <trigger>
+                            <expression>{{ trigger.expression }}</expression>
+                            {% if trigger.recovery_expression %}
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{{ trigger.recovery_expression }}</recovery_expression>
+                            {% endif %}
+                            <name>[{{ port }}]: {{ trigger.name }}</name>
+                            <priority>{{ trigger.priority }}</priority>
+                            {% if trigger.manual_close %}
+                            <manual_close>YES</manual_close>
+                            {% endif %}
+                        </trigger>
+                    {% endfor %}
+                    </triggers>
+                    {% endif %}
+                </item>
+{% endfor %}
+{% else %}
+                <item>
+                    <name>{{ item.name }}</name>
+                    <type>{{ item.item_type }}</type>
+                    {% if item.oid %}
+                    <snmp_oid>{{ item.oid }}</snmp_oid>
+                    {% endif %}
+                    <key>{{ item.key }}</key>
+                    <delay>{{ item.delay }}</delay>
+                    <history>{{ item.history }}</history>
+                    <trends>{{ item.trends }}</trends>
+                    {% if item.value_type %}
+                    <value_type>{{ item.value_type }}</value_type>
+                    {% endif %}
+                    {% if item.units %}
+                    <units>{{ item.units }}</units>
+                    {% endif %}
+                    {% if item.param %}
+                    <params>{{ item.param }}</params>
+                    {% endif %}
+                    <applications>
+                        <application>
+                            <name>{{ item.application }}</name>
+                        </application>
+                    </applications>
+                    {% if item.MULTIPLIER or item.CHANGE_PER_SECOND %}
+                    <preprocessing>
+                        {% if item.CHANGE_PER_SECOND %}
+                        <step>
+                            <type>CHANGE_PER_SECOND</type>
+                            <params/>
+                        </step>
+                        {% endif %}
+                        {% if item.MULTIPLIER%}
+                        <step>
+                            <type>MULTIPLIER</type>
+                            <params>{{ item.MULTIPLIER }}</params>
+                        </step>
+                        {% endif %}
+                    </preprocessing>
+                    {% endif %}
+                    {% if item.triggers %}
+                    <triggers>
+                    {% for trigger in item.triggers %}
+                        <trigger>
+                            <expression>{{ trigger.expression }}</expression>
+                            {% if trigger.recovery_expression %}
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{{ trigger.recovery_expression }}</recovery_expression>
+                            {% endif %}
+                            <name>{{ trigger.name }}</name>
+                            <priority>{{ trigger.priority }}</priority>
+                            {% if trigger.manual_close %}
+                            <manual_close>YES</manual_close>
+                            {% endif %}
+                        </trigger>
+                    {% endfor %}
+                    </triggers>
+                    {% endif %}
+                </item>
+{% endif %}
+{% endfor %}
