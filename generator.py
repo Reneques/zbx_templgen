@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from jinja2 import Environment, FileSystemLoader
+from sys import argv
 import yaml
 
 
 def gen_template(template_j2, data_yml):
     """
-    Создает блок шаблона
+    Создает шаблон
     :param template_j2: Файл с J2 шаблоном
     :param data_yml: Файл с данными в виде папка/файл
     :return: строка с шаблоном
@@ -24,8 +25,10 @@ def gen_template(template_j2, data_yml):
 
 
 if __name__ == '__main__':
-    print(
-#        gen_template("applications.j2", "data/eltex/ltp8x/applications.yml"),
-#        gen_template("items.j2", "data/eltex/ltp8x/items.yml"),
-        gen_template("graphs.j2", "data/eltex/ltp8x/graphs.yml")
-    )
+    # Для запуска скрипта без аргументов:
+    # print(gen_template("main.j2", "data/eltex/ltp4x.yml"))
+    #
+    # Для запуска скрипта через аргументы:
+    # template = argv[1]
+    # data = argv[2]
+    # print(gen_template(template, data))

@@ -18,7 +18,7 @@
                     <units>{{ item.units }}</units>
                     {% endif %}
                     {% if item.params %}
-                    <params>{{ item.params[port] }}</params>
+                    <params>{{ item.params|join(p_oid+'")+') }}{{ p_oid }}")</params>
                     {% endif %}
                     <applications>
                         <application>

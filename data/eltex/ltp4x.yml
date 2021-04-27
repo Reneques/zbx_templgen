@@ -1,3 +1,20 @@
+host:
+  group: Aggregation
+  template: ltp-4x-template
+  name: Template Eltex LTP-4X
+applications:
+  - Front port Gi0
+  - Front port Gi1
+  - Front port Gi2
+  - Front port Gi3
+  - Front port 10Gi0
+  - Front port 10Gi1
+  - PON port 0
+  - PON port 1
+  - PON port 2
+  - PON port 3
+  - ICMP
+  - System Monitoring
 items:
   - name: 'ICMP (ping)'
     item_type: 'SIMPLE'
@@ -260,29 +277,99 @@ items:
     trends: '30d'
     interfaces: 'ports_eltex'
     params:
-      Front port 10Gi0: 'last("ltp8xSwitchPortCollisions.9")+last("ltp8xSwitchPortBadCrc.9")+last("ltp8xSwitchPortFragmentsPkts.9")+last("ltp8xSwitchPortDropEvents.9")'
-      Front port 10Gi1: 'last("ltp8xSwitchPortCollisions.10")+last("ltp8xSwitchPortBadCrc.10")+last("ltp8xSwitchPortFragmentsPkts.10")+last("ltp8xSwitchPortDropEvents.10")'
-      Front port Gi0: 'last("ltp8xSwitchPortCollisions.1")+last("ltp8xSwitchPortBadCrc.1")+last("ltp8xSwitchPortFragmentsPkts.1")+last("ltp8xSwitchPortDropEvents.1")'
-      Front port Gi1: 'last("ltp8xSwitchPortCollisions.2")+last("ltp8xSwitchPortBadCrc.2")+last("ltp8xSwitchPortFragmentsPkts.2")+last("ltp8xSwitchPortDropEvents.2")'
-      Front port Gi2: 'last("ltp8xSwitchPortCollisions.3")+last("ltp8xSwitchPortBadCrc.3")+last("ltp8xSwitchPortFragmentsPkts.3")+last("ltp8xSwitchPortDropEvents.3")'
-      Front port Gi3: 'last("ltp8xSwitchPortCollisions.4")+last("ltp8xSwitchPortBadCrc.4")+last("ltp8xSwitchPortFragmentsPkts.4")+last("ltp8xSwitchPortDropEvents.4")'
-      Front port Gi4: 'last("ltp8xSwitchPortCollisions.5")+last("ltp8xSwitchPortBadCrc.5")+last("ltp8xSwitchPortFragmentsPkts.5")+last("ltp8xSwitchPortDropEvents.5")'
-      Front port Gi5: 'last("ltp8xSwitchPortCollisions.6")+last("ltp8xSwitchPortBadCrc.6")+last("ltp8xSwitchPortFragmentsPkts.6")+last("ltp8xSwitchPortDropEvents.6")'
-      Front port Gi6: 'last("ltp8xSwitchPortCollisions.7")+last("ltp8xSwitchPortBadCrc.7")+last("ltp8xSwitchPortFragmentsPkts.7")+last("ltp8xSwitchPortDropEvents.7")'
-      Front port Gi7: 'last("ltp8xSwitchPortCollisions.8")+last("ltp8xSwitchPortBadCrc.8")+last("ltp8xSwitchPortFragmentsPkts.8")+last("ltp8xSwitchPortDropEvents.8")'
-      PON port 0: 'last("ltp8xSwitchPortCollisions.11")+last("ltp8xSwitchPortBadCrc.11")+last("ltp8xSwitchPortFragmentsPkts.11")+last("ltp8xSwitchPortDropEvents.11")'
-      PON port 1: 'last("ltp8xSwitchPortCollisions.12")+last("ltp8xSwitchPortBadCrc.12")+last("ltp8xSwitchPortFragmentsPkts.12")+last("ltp8xSwitchPortDropEvents.12")'
-      PON port 2: 'last("ltp8xSwitchPortCollisions.15")+last("ltp8xSwitchPortBadCrc.15")+last("ltp8xSwitchPortFragmentsPkts.15")+last("ltp8xSwitchPortDropEvents.15")'
-      PON port 3: 'last("ltp8xSwitchPortCollisions.16")+last("ltp8xSwitchPortBadCrc.16")+last("ltp8xSwitchPortFragmentsPkts.16")+last("ltp8xSwitchPortDropEvents.16")'
-      PON port 4: 'last("ltp8xSwitchPortCollisions.17")+last("ltp8xSwitchPortBadCrc.17")+last("ltp8xSwitchPortFragmentsPkts.17")+last("ltp8xSwitchPortDropEvents.17")'
-      PON port 5: 'last("ltp8xSwitchPortCollisions.18")+last("ltp8xSwitchPortBadCrc.18")+last("ltp8xSwitchPortFragmentsPkts.18")+last("ltp8xSwitchPortDropEvents.18")'
-      PON port 6: 'last("ltp8xSwitchPortCollisions.19")+last("ltp8xSwitchPortBadCrc.19")+last("ltp8xSwitchPortFragmentsPkts.19")+last("ltp8xSwitchPortDropEvents.19")'
-      PON port 7: 'last("ltp8xSwitchPortCollisions.20")+last("ltp8xSwitchPortBadCrc.20")+last("ltp8xSwitchPortFragmentsPkts.20")+last("ltp8xSwitchPortDropEvents.20")'
+      - 'last("ltp8xSwitchPortCollisions'
+      - 'last("ltp8xSwitchPortBadCrc'
+      - 'last("ltp8xSwitchPortFragmentsPkts'
+      - 'last("ltp8xSwitchPortDropEvents'
     triggers:
       - expression: '{last()}>20'
         name: 'errors accumulation'
         priority: HIGH
         manual_close: YES
+graphs:
+  - name: 'Host temperature'
+    ymin: '-10'
+    ymax: '60'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'ltp8xSensor1Temperature'
+      - sort: '2'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF00FF'
+        key: 'ltp8xSensor2Temperature'
+  - name: 'Host CPU load'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'ltp8xCPULoadAverage1Minute'
+  - name: 'Host memory utilization'
+    ymin: '0'
+    ymax: '100'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'ltp8xRAMUsage'
+  - name: 'ICMP'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'icmppingsec[,10,,1450,,]'
+      - sort: '2'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF00FF'
+        key: 'icmppingloss[,10,,1450,]'
+  - name: 'Traffic'
+    interfaces: 'ports_eltex'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'ltp8xSwitchPortGoodOctetsRcv'
+      - sort: '2'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF00FF'
+        key: 'ltp8xSwitchPortGoodOctetsSent'
+  - name: 'Statistics'
+    interfaces: 'ports_eltex'
+    g_items:
+      - sort: '1'
+        color: 'FF0000'
+        key: 'ltp8xSwitchPortGoodPktsRcv'
+      - sort: '2'
+        color: 'FF00FF'
+        key: 'ltp8xSwitchPortGoodPktsSent'
+      - sort: '3'
+        color: 'FF8C00'
+        key: 'ltp8xSwitchPortBrdcPktsRcv'
+      - sort: '4'
+        color: 'FFD700'
+        key: 'ltp8xSwitchPortBrdcPktsSent'
+      - sort: '5'
+        color: 'ADFF2F'
+        key: 'ltp8xSwitchPortDropEvents'
+      - sort: '6'
+        color: '228B22'
+        key: 'ltp8xSwitchPortFragmentsPkts'
+      - sort: '7'
+        color: 'ADFF2F'
+        key: 'ltp8xSwitchPortBadCrc'
+      - sort: '8'
+        color: '228B22'
+        key: 'ltp8xSwitchPortCollisions'
+  - name: 'ONT oline'
+    interfaces: 'ports_gpon'
+    ymin: '0'
+    ymax: '128'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'ltp8xPONChannelONTCount'
 ports:
   ports_eltex:
     Front port 10Gi0: '.9'
@@ -291,27 +378,15 @@ ports:
     Front port Gi1: '.2'
     Front port Gi2: '.3'
     Front port Gi3: '.4'
-    Front port Gi4: '.5'
-    Front port Gi5: '.6'
-    Front port Gi6: '.7'
-    Front port Gi7: '.8'
     PON port 0: '.11'
     PON port 1: '.12'
     PON port 2: '.15'
     PON port 3: '.16'
-    PON port 4: '.17'
-    PON port 5: '.18'
-    PON port 6: '.19'
-    PON port 7: '.20'
   ports_gpon:
     PON port 0: '.1'
     PON port 1: '.2'
     PON port 2: '.3'
     PON port 3: '.4'
-    PON port 4: '.5'
-    PON port 5: '.6'
-    PON port 6: '.7'
-    PON port 7: '.8'
   ports_standart:
     Front port 10Gi0: '.17'
     Front port 10Gi1: '.18'
@@ -319,15 +394,7 @@ ports:
     Front port Gi1: '.10'
     Front port Gi2: '.11'
     Front port Gi3: '.12'
-    Front port Gi4: '.13'
-    Front port Gi5: '.14'
-    Front port Gi6: '.15'
-    Front port Gi7: '.16'
     PON port 0: '.1'
     PON port 1: '.2'
     PON port 2: '.3'
     PON port 3: '.4'
-    PON port 4: '.5'
-    PON port 5: '.6'
-    PON port 6: '.7'
-    PON port 7: '.8'

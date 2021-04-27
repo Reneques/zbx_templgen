@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <groups>
+        <group>
+            <name>{{ host.group }}</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>{{ host.template }}</template>
+            <name>{{ host.name }}</name>
+            <groups>
+                <group>
+                    <name>{{ host.group }}</name>
+                </group>
+            </groups>
+            <applications>
+            {% include 'applications.j2' %}
+            </applications>
+            <items>
+            {% include 'items.j2' %}
+            </items>
+        </template>
+    </templates>
+    <graphs>
+    {% include 'graphs.j2' %}
+    </graphs>
+</zabbix_export>
