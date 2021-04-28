@@ -157,7 +157,7 @@ items:
     triggers:
       - expression: '{last(,10m)}&gt;80'
         recovery_expression: '{last(,10m)}&lt;80'
-        name: 'Critical temperature'
+        name: 'Critical memory utilization'
         priority: HIGH
         manual_close: YES
   - name: 'Online ONT count'

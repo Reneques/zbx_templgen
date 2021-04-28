@@ -29,6 +29,6 @@ if __name__ == '__main__':
     # print(gen_template("main.j2", "data/eltex/ltp4x.yml"))
     #
     # Для запуска скрипта через аргументы:
-    # template = argv[1]
-    # data = argv[2]
-    # print(gen_template(template, data))
+     template = argv[1]
+     data = argv[2]
+     print(gen_template(template, data))

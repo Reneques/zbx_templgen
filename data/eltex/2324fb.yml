@@ -1,0 +1,485 @@
+host:
+  group: Aggregation
+  template: mes2324fb-template
+  name: Template Eltex MES-2324-FB
+applications:
+  - GE 1/0/1
+  - GE 1/0/2
+  - GE 1/0/3
+  - GE 1/0/4
+  - GE 1/0/5
+  - GE 1/0/6
+  - GE 1/0/7
+  - GE 1/0/8
+  - GE 1/0/9
+  - GE 1/0/10
+  - GE 1/0/11
+  - GE 1/0/12
+  - GE 1/0/13
+  - GE 1/0/14
+  - GE 1/0/15
+  - GE 1/0/16
+  - GE 1/0/17
+  - GE 1/0/18
+  - GE 1/0/19
+  - GE 1/0/20
+  - GE 1/0/21
+  - GE 1/0/22
+  - GE 1/0/23
+  - GE 1/0/24
+  - XGE 1/0/1
+  - XGE 1/0/2
+  - XGE 1/0/3
+  - XGE 1/0/4
+  - ICMP
+  - System Monitoring
+items:
+  - name: 'ICMP (ping)'
+    item_type: 'SIMPLE'
+    application: 'ICMP'
+    key: 'icmpping[,4]'
+    delay: '60s'
+    history: '1d'
+    trends: '3d'
+    triggers:
+      - expression: '{last()}=0'
+        name: 'ICMP unreachable'
+        priority: WARNING
+        manual_close: YES
+  - name: 'ICMP (RTT)'
+    item_type: 'SIMPLE'
+    application: 'ICMP'
+    key: 'icmppingsec[,10,,1450,,]'
+    value_type: 'FLOAT'
+    delay: '60s'
+    history: '7d'
+    trends: '30d'
+    units: 'ms'
+    MULTIPLIER: '1000'
+  - name: 'ICMP (LOSS)'
+    item_type: 'SIMPLE'
+    application: 'ICMP'
+    key: 'icmppingloss[,10,,1450,]'
+    value_type: 'FLOAT'
+    delay: '60s'
+    history: '7d'
+    trends: '30d'
+    units: 'ms'
+    MULTIPLIER: '1000'
+  - name: 'System uptime'
+    item_type: 'SNMP_AGENT'
+    application: 'System Monitoring'
+    key: 'sysUpTime'
+    oid: '1.3.6.1.2.1.1.3.0'
+    delay: '300s'
+    history: '1d'
+    trends: '1d'
+    MULTIPLIER: '0.01'
+    triggers:
+      - expression: '{last(,10m)}&lt;600'
+        name: 'System restarted'
+        priority: WARNING
+        manual_close: YES
+  - name: 'CPU load'
+    item_type: 'SNMP_AGENT'
+    application: 'System Monitoring'
+    key: 'rlCpuUtilDuringLastMinute'
+    oid: '1.3.6.1.4.1.89.1.8.0'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: '%'
+    MULTIPLIER: '0.01'
+    triggers:
+      - expression: '{last(,5m)}&gt;70'
+        recovery_expression: '{last(,10m)}&lt;65'
+        name: 'CPU overload'
+        priority: HIGH
+        manual_close: YES
+  - name: 'Memory usage'
+    item_type: 'SNMP_AGENT'
+    application: 'System Monitoring'
+    key: 'eltexProcessMemoryFreePercent'
+    oid: '1.3.6.1.4.1.35265.41.1.2.1.1.6.0'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: '%'
+    triggers:
+      - expression: '{last(,10m)}&gt;80'
+        recovery_expression: '{last(,10m)}&lt;80'
+        name: 'Critical memory utilization'
+        priority: HIGH
+        manual_close: YES
+  - name: 'Supply PU Status'
+    item_type: 'SNMP_AGENT'
+    application: 'System Monitoring'
+    key: 'eltEnvMonSupplyStatusState'
+    oid: '1.3.6.1.4.1.89.83.1.2.1.3.67109186'
+    delay: '600s'
+    history: '1h'
+    trends: '1d'
+    triggers:
+      - expression: '{last()}=7'
+        recovery_expression: '{last()}=1'
+        name: 'Batery charging'
+        priority: INFO
+        manual_close: YES
+      - expression: '{last()}=3'
+        recovery_expression: '{last()}&lt;&gt;3'
+        name: 'Battery capacity is critical'
+        priority: HIGH
+        manual_close: YES
+      - expression: '{last()}=6'
+        recovery_expression: '{last()}&lt;&gt;6'
+        name: 'Battery connect error'
+        priority: HIGH
+        manual_close: YES
+      - expression: '{last()}=2'
+        recovery_expression: '{last()}=7'
+        name: 'Input power unit switched to battery'
+        priority: WARNING
+        manual_close: YES
+  - name: 'FAN 1 status'
+    item_type: 'SNMP_AGENT'
+    application: 'System Monitoring'
+    key: 'rlPhdUnitEnvParamFan1'
+    oid: '1.3.6.1.4.1.89.53.15.1.4.1'
+    delay: '600s'
+    history: '1h'
+    trends: '1d'
+    triggers:
+      - expression: '{last()}=5'
+        name: 'FAN 1 error'
+        priority: HIGH
+        manual_close: YES
+  - name: 'FAN 2 status'
+    item_type: 'SNMP_AGENT'
+    application: 'System Monitoring'
+    key: 'rlPhdUnitEnvParamFan2'
+    oid: '1.3.6.1.4.1.89.53.15.1.5.1'
+    delay: '600s'
+    history: '1h'
+    trends: '1d'
+    triggers:
+      - expression: '{last()}=5'
+        name: 'FAN 2 error'
+        priority: HIGH
+        manual_close: YES
+  - name: 'FAN 3 status'
+    item_type: 'SNMP_AGENT'
+    application: 'System Monitoring'
+    key: 'rlPhdUnitEnvParamFan3'
+    oid: '1.3.6.1.4.1.89.53.15.1.6.1'
+    delay: '600s'
+    history: '1h'
+    trends: '1d'
+    triggers:
+      - expression: '{last()}=5'
+        name: 'FAN 3 error'
+        priority: HIGH
+        manual_close: YES
+  - name: 'FAN 4 status'
+    item_type: 'SNMP_AGENT'
+    application: 'System Monitoring'
+    key: 'rlPhdUnitEnvParamFan4'
+    oid: '1.3.6.1.4.1.89.53.15.1.7.1'
+    delay: '600s'
+    history: '1h'
+    trends: '1d'
+    triggers:
+      - expression: '{last()}=5'
+        name: 'FAN 4 error'
+        priority: HIGH
+        manual_close: YES
+  - name: 'CPU temperature'
+    item_type: 'SNMP_AGENT'
+    application: 'System Monitoring'
+    key: 'rlPhdUnitEnvParamTemp'
+    oid: '1.3.6.1.4.1.89.53.15.1.10'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'c'
+    triggers:
+      - expression: '{last(,10m)}&lt;10 or {last(,10m)}&gt;70'
+        recovery_expression: '{last(,10m)}&gt;10 and {last(,10m)}&lt;60'
+        name: 'Critical temperature'
+        priority: HIGH
+        manual_close: YES
+  - name: 'Operation status'
+    item_type: 'SNMP_AGENT'
+    key: 'ifOperStatus'
+    oid: '1.3.6.1.2.1.2.2.1.8'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    interfaces: 'ports_standart'
+    triggers:
+      - expression: '{last()}=2'
+        name: 'is down'
+        priority: WARNING
+        manual_close: YES
+  - name: 'Incoming unicast packets'
+    item_type: 'SNMP_AGENT'
+    key: 'ifInUcastPkts'
+    oid: '1.3.6.1.2.1.2.2.1.11'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'pps'
+    interfaces: 'ports_standart'
+    CHANGE_PER_SECOND: YES
+  - name: 'Outgoing unicast packets'
+    item_type: 'SNMP_AGENT'
+    key: 'ifOutUcastPkts'
+    oid: '1.3.6.1.2.1.2.2.1.17'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'pps'
+    interfaces: 'ports_standart'
+    CHANGE_PER_SECOND: YES
+  - name: 'Incoming multicast packets'
+    item_type: 'SNMP_AGENT'
+    key: 'ifInMulticastPkts'
+    oid: '1.3.6.1.2.1.31.1.1.1.2'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'pps'
+    interfaces: 'ports_standart'
+    CHANGE_PER_SECOND: YES
+  - name: 'Outgoing multicast packets'
+    item_type: 'SNMP_AGENT'
+    key: 'ifOutMulticastPkts'
+    oid: '1.3.6.1.2.1.31.1.1.1.3'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'pps'
+    interfaces: 'ports_standart'
+    CHANGE_PER_SECOND: YES
+  - name: 'Incoming broadcast packets'
+    item_type: 'SNMP_AGENT'
+    key: 'ifInBroadcastPkts'
+    oid: '1.3.6.1.2.1.31.1.1.1.2'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'pps'
+    interfaces: 'ports_standart'
+    CHANGE_PER_SECOND: YES
+  - name: 'Outgoing broadcast packets'
+    item_type: 'SNMP_AGENT'
+    key: 'ifOutBroadcastPkts'
+    oid: '1.3.6.1.2.1.31.1.1.1.5'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'pps'
+    interfaces: 'ports_standart'
+    CHANGE_PER_SECOND: YES
+  - name: 'Incoming traffic'
+    item_type: 'SNMP_AGENT'
+    key: 'eltSwIfUtilizationCurrentInRate'
+    oid: '.1.3.6.1.4.1.35265.1.23.43.2.1.4'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'bps'
+    interfaces: 'ports_standart'
+    CHANGE_PER_SECOND: YES
+    MULTIPLIER: '1000'
+  - name: 'Outgoing traffic'
+    item_type: 'SNMP_AGENT'
+    key: 'eltSwIfUtilizationCurrentOutRate'
+    oid: '.1.3.6.1.4.1.35265.1.23.43.2.1.6'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'bps'
+    interfaces: 'ports_standart'
+    CHANGE_PER_SECOND: YES
+    MULTIPLIER: '1000'
+  - name: 'Incoming errors'
+    item_type: 'SNMP_AGENT'
+    key: 'ifInErrors'
+    oid: '1.3.6.1.2.1.2.2.1.14'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'errs'
+    interfaces: 'ports_standart'
+    CHANGE_PER_SECOND: YES
+    triggers:
+      - expression: '{last()}&gt;20'
+        name: 'Incoming errors accumulation'
+        priority: HIGH
+        manual_close: YES
+  - name: 'Outgoing errors'
+    item_type: 'SNMP_AGENT'
+    key: 'ifOutErrors'
+    oid: '1.3.6.1.2.1.2.2.1.20'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'errs'
+    interfaces: 'ports_standart'
+    CHANGE_PER_SECOND: YES
+    triggers:
+      - expression: '{last()}&gt;20'
+        name: 'Outgoing errors accumulation'
+        priority: HIGH
+        manual_close: YES
+  - name: 'RX optic power'
+    item_type: 'SNMP_AGENT'
+    key: 'rlPhyTestTableRxOpticalPower'
+    oid: '1.3.6.1.4.1.89.90.1.2.1.3'
+    delay: '300s'
+    history: '1d'
+    trends: '7d'
+    units: 'dbm'
+    interfaces: 'ports_ddm'
+    CHANGE_PER_SECOND: YES
+    triggers:
+      - expression: '({avg(10m)}-{avg(7d)})*-1&gt;2'
+        name: 'RX optic power degradation'
+        priority: HIGH
+        manual_close: YES
+graphs:
+  - name: 'CPU temperature'
+    ymin: '-10'
+    ymax: '60'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'rlPhdUnitEnvParamTemp'
+  - name: 'Host CPU load'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'rlCpuUtilDuringLastMinute'
+  - name: 'Host memory utilization'
+    ymin: '0'
+    ymax: '100'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'eltexProcessMemoryFreePercent'
+  - name: 'ICMP'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'icmppingsec[,10,,1450,,]'
+      - sort: '2'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF00FF'
+        key: 'icmppingloss[,10,,1450,]'
+  - name: 'Traffic'
+    interfaces: 'ports_standart'
+    g_items:
+      - sort: '1'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF0000'
+        key: 'eltSwIfUtilizationCurrentInRate'
+      - sort: '2'
+        drawtype: 'GRADIENT_LINE'
+        color: 'FF00FF'
+        key: 'eltSwIfUtilizationCurrentOutRate'
+  - name: 'Statistics'
+    interfaces: 'ports_standart'
+    g_items:
+      - sort: '1'
+        color: 'FF0000'
+        key: 'ifInUcastPkts'
+      - sort: '2'
+        color: 'FF00FF'
+        key: 'ifOutUcastPkts'
+      - sort: '3'
+        color: 'FF8C00'
+        key: 'ifInMulticastPkts'
+      - sort: '4'
+        color: 'FFD700'
+        key: 'ifOutMulticastPkts'
+      - sort: '5'
+        color: 'ADFF2F'
+        key: 'ifInBroadcastPkts'
+      - sort: '6'
+        color: '228B22'
+        key: 'ifOutBroadcastPkts'
+      - sort: '7'
+        color: 'ADFF2F'
+        key: 'ifInErrors'
+      - sort: '8'
+        color: '228B22'
+        key: 'ifOutErrors'
+  - name: 'RX optic power'
+    interfaces: 'ports_ddm'
+    g_items:
+      - sort: '1'
+        color: 'FF0000'
+        key: 'rlPhyTestTableRxOpticalPower'
+ports:
+  ports_standart:
+    GE 1/0/1: .49
+    GE 1/0/2: .50
+    GE 1/0/3: .51
+    GE 1/0/4: .52
+    GE 1/0/5: .53
+    GE 1/0/6: .54
+    GE 1/0/7: .55
+    GE 1/0/8: .56
+    GE 1/0/9: .57
+    GE 1/0/10: .58
+    GE 1/0/11: .59
+    GE 1/0/12: .60
+    GE 1/0/13: .61
+    GE 1/0/14: .62
+    GE 1/0/15: .63
+    GE 1/0/16: .64
+    GE 1/0/17: .65
+    GE 1/0/18: .66
+    GE 1/0/19: .67
+    GE 1/0/20: .68
+    GE 1/0/21: .69
+    GE 1/0/22: .70
+    GE 1/0/23: .71
+    GE 1/0/24: .72
+    XGE 1/0/1: .105
+    XGE 1/0/2: .106
+    XGE 1/0/3: .107
+    XGE 1/0/4: .108
+  ports_ddm:
+    GE 1/0/1: .49.9
+    GE 1/0/2: .50.9
+    GE 1/0/3: .51.9
+    GE 1/0/4: .52.9
+    GE 1/0/5: .53.9
+    GE 1/0/6: .54.9
+    GE 1/0/7: .55.9
+    GE 1/0/8: .56.9
+    GE 1/0/9: .57.9
+    GE 1/0/10: .58.9
+    GE 1/0/11: .59.9
+    GE 1/0/12: .60.9
+    GE 1/0/13: .61.9
+    GE 1/0/14: .62.9
+    GE 1/0/15: .63.9
+    GE 1/0/16: .64.9
+    GE 1/0/17: .65.9
+    GE 1/0/18: .66.9
+    GE 1/0/19: .67.9
+    GE 1/0/20: .68.9
+    GE 1/0/21: .69.9
+    GE 1/0/22: .70.9
+    GE 1/0/23: .71.9
+    GE 1/0/24: .72.9
+    XGE 1/0/1: .105.9
+    XGE 1/0/2: .106.9
+    XGE 1/0/3: .107.9
+    XGE 1/0/4: .108.9
